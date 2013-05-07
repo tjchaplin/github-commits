@@ -1,5 +1,5 @@
 var should = require('should');
-var gitCommits = require("../lib/gitHubCommitsApi.js");
+var gitCommits = require("../lib/GitHubCommitsApi.js");
 
 var fs = require('fs');
  
