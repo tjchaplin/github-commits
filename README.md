@@ -1,4 +1,4 @@
-#Git-Commits
+#GitHub-Commits
 
   Framework to get users and organization commit stats from github
 
@@ -12,15 +12,15 @@
 
 ##Install
 
-  `npm install git-commits`
+  `npm install github-commits`
 
 ##Examples
 
 ###Get all GitHub repository commits for a user
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   var options = {};
   var owner = {name:"tjchaplin",type:"users"};
@@ -34,8 +34,8 @@
 ###Get all GitHub repository commits for an org
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   var options = {};
   var owner = {name:"github",type:"orgs"};
@@ -48,8 +48,8 @@
 ###Get all GitHub repository commits for a user with a date filter
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   var owner = {name:"tjchaplin",type:"users"};
   //options can contain any of number of the below properties
@@ -65,8 +65,8 @@
 ###Get all GitHub repository commits for an org with a date filter
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   var owner = {name:"github",type:"orgs"};
   //options can contain any of number of the below properties
@@ -82,8 +82,8 @@
 ###Get all GitHub repositories for a user
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   gitConnection.getOwnerRepositories("tjchaplin", function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
@@ -108,8 +108,8 @@
 ###Get all GitHub repositories for an org
 
   ```javascript
-  var gitCommits = require("git-commits");
-  var gitConnection = gitCommits.Connect();
+  var gitHubCommits = require("github-commits");
+  var gitConnection = gitHubCommits.Connect();
 
   var owner = {name:"github",type:"orgs"};
   gitConnection.getOwnerRepositories({name:"github",type:"orgs"}, function(repositories){
@@ -121,32 +121,32 @@
 ###Specify an authorization key to connect with GitHub
 
   ```javascript
-  var gitCommits = require("git-commits");
+  var gitHubCommits = require("github-commits");
   
   //Can specify the GitHub api authorization key for the private or enterprise instance
   var apiAuthorizationKey = "";
-  var gitConnection = gitCommits.Connect(apiAuthorizationKey);
+  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey);
   ```
 
 ###Specify an authorization key and Specific GitHub url to connect with
 
   ```javascript
-  var gitCommits = require("git-commits");
+  var gitHubCommits = require("github-commits");
 
   //Can specify the GitHub api authorization key for the private or enterprise instance
   var apiAuthorizationKey = "";
   var gitHubUrl = "https://api.github.com"
-  var gitConnection = gitCommits.Connect(apiAuthorizationKey,gitHubUrl);
+  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey,gitHubUrl);
   ```
 
 ###Specify an enterprise or private GitHub instance
 
   ```javascript
-  var gitCommits = require("git-commits");
+  var gitHubCommits = require("github-commits");
 
   //Can specify the GitHub api authorization key for the private or enterprise instance
   var apiAuthorizationKey = "";
-  var gitConnection = gitCommits.Connect(apiAuthorizationKey,"https://<ENTERPRISE-GITHUB-URL>");
+  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey,"https://<ENTERPRISE-GITHUB-URL>");
 
   //the framework can be used the same as the default connection
   ```
