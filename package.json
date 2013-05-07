@@ -1,0 +1,44 @@
+{
+  "name": "github-commits",
+  "description": "Framework to get users and organization commit stats from github",
+  "version": "0.0.1",
+  "author": "Tim Chaplin <tim.chaplin@ticktockdevelopment.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tjchaplin/github-commits.git"
+  },
+  "homepage": "https://github.com/tjchaplin/github-commits.git",
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-release": "~0.3.3",
+    "yaenumerable": "*"
+  },
+  "browserDependencies": {},
+  "dependencies": {
+    "yaenumerable": "*"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "gh",
+    "commits",
+    "statistics",
+    "monitor"
+  ],
+  "engines": {
+    "node": ">= 0.2.0"
+  },
+  "main": "./lib/gitCommitsApi.js",
+  "directories": {
+    "test": "tests",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha tests/*"
+  },
+  "license": "MIT"
+}
