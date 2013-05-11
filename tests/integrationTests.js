@@ -16,7 +16,7 @@ describe('When using git api',function(){
 	
 	it("should be able to get repositories based on a username",function(onComplete){
 		var gitConnection = gitHubCommits.Connect();
-		gitConnection.getOwnerRepositories("tjchaplin",function(data){
+		gitConnection.getRepositories("tjchaplin",function(data){
 			data.should.not.equal(undefined);
 			onComplete();			
 		});
@@ -24,16 +24,15 @@ describe('When using git api',function(){
 	
 	it("should be able to get repositories based on a user",function(onComplete){
 		var gitConnection = gitHubCommits.Connect();
-		gitConnection.getOwnerRepositories({name:"tjchaplin",type:"users"},function(data){
+		gitConnection.getRepositories({name:"tjchaplin",type:"users"},function(data){
 			data.should.not.equal(undefined);
 			onComplete();			
 		});
-	});
-	
+	});	
 	
 	it("should be able to get number of repository commits",function(onComplete){
 		var gitConnection = gitHubCommits.Connect();
-		gitConnection.getRepositoryCommits({name:"developer.github.com",owner:"github"},{},function(data){
+		gitConnection.updateRepositoryCommitCount({name:"developer.github.com",owner:"github"},{},function(data){
 			data.numberOfCommits.should.be.above(-1);
 			onComplete();			
 		});
@@ -47,22 +46,21 @@ describe('When using git api',function(){
 		});
 	});
 
-	// it("should be able to filter commits by a start and end date",function(onComplete){
-	// 	var sinceDate = "2013-05-05T00:00:00Z";
-	// 	var untilDate = "2013-05-05T23:59:59Z";
-	// 	var gitConnection = gitHubCommits.Connect();
-	// 	var optionFilters = {sinceDate:sinceDate,untilDate : untilDate};
-	// 	var owner = {name:"tjchaplin",type:"users"}
-	// 	gitConnection.getAllRepositoryCommits(owner,optionFilters,function(repositories){
+	it("should be able to filter commits by a start and end date",function(onComplete){
+		var sinceDate = new Date("2013-05-04T00:00:00Z");
+		var untilDate = new Date("2013-05-06T23:59:59Z");
+		var gitConnection = gitHubCommits.Connect();
+		var optionFilters = {sinceDate:sinceDate,untilDate : untilDate};
+		var owner = {name:"tjchaplin",type:"users"}
+		gitConnection.getAllRepositoryCommits(owner,optionFilters,function(repositories){
+			var result = enumerable.FromArray(repositories)
+								.Where(function(repository){return repository.name == "YAEnumerable"})
+								.First();
 
-	// 		var result = enumerable.FromArray(repositories)
-	// 							.Where(function(repository){return repository.name == "YAEnumerable"})
-	// 							.First();
-
-	// 		result.numberOfCommits.should.be.equal(19);
-	// 		onComplete();			
-	// 	});
-	// });
+			result.numberOfCommits.should.be.equal(19);
+			onComplete();			
+		});
+	});
 
 	//-----------------------------
 	//Explict org tests

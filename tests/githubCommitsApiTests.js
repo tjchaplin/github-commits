@@ -1,5 +1,5 @@
 var should = require('should');
-var gitCommits = require("../lib/GitHubCommitsApi2.js");
+var gitCommits = require("../lib/githubCommitsApi.js");
 var enumerable = require("yaenumerable");
 
 var fs = require('fs');
@@ -15,32 +15,147 @@ var loadTestData = function(fileName,onLoaded){
 	  onLoaded(data);
 	});
 }
-var getFirstSundayOfWeek = function(date){
-    var firstSundayOfWeek = new Date(date);
-    firstSundayOfWeek.setHours(0,0,0,0);
 
-    //Sunday is day 0
-	firstSundayOfWeek.setDate(firstSundayOfWeek.getDate() - firstSundayOfWeek.getDay());
-	return firstSundayOfWeek;
-};
-
-var getLastDayOfWeek = function(aDate)
-        {
-            var lastDayOfWeek = new Date(aDate);
-            var maxDaysInWeek = 7;
-            lastDayOfWeek.setHours(23,59,59,59);
-            var daysToAdd = maxDaysInWeek-lastDayOfWeek.getDay();
-            
-            if (lastDayOfWeek.getDay() == 0)
-                daysToAdd = 0;
-
-            lastDayOfWeek.setDate(lastDayOfWeek.getDate() + daysToAdd);
-            return lastDayOfWeek;
-        };
 
 describe('When using git api',function(){
 	this.timeout(60000);
 	
+
+	it("should be able to get repositories based on a username",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
+		};	
+
+		gitConnection.getRepositories("tjchaplin",function(data){
+			data.should.not.equal(undefined);
+			onComplete();			
+		});
+	});
+	
+	it("should be able to get repositories based on a user owner",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
+		};	
+		gitConnection.getRepositories({name:"tjchaplin",type:"users"},function(data){
+			data.should.not.equal(undefined);
+			onComplete();			
+		});
+	});
+	
+	it("should be able to get repositories based on an org owner",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
+		};	
+		gitConnection.getRepositories({name:"github",type:"orgs"},function(data){
+			data.should.not.equal(undefined);
+			onComplete();			
+		});
+	});
+
+	
+	it("should be able to get commits by day",function(onComplete){
+
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
+		};	
+
+		gitConnection.getRepositoryDailyCommits("tjchaplin",{},function(data){
+	 		data.length.should.equal(364);
+			onComplete();			
+		});
+	});
+
+
+	it("should be able to get commits given a since date ",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
+		};	
+		var options = {sinceDate:new Date("Tue May 07 2013")};
+		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
+	 		data.length.should.equal(5);
+			onComplete();			
+		});
+
+	});
+
+	it("should be able to get commits given an until date ",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
+		};	
+		var options = {untilDate:new Date("Tue May 07 2013")};
+		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
+	 		data.length.should.equal(359);
+			onComplete();			
+		});
+
+	});
+
+
+	it("should be able to get commits given a since and until date ",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.makeRequest = function(url,callBack){
+			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
+		};	
+		var options = {sinceDate:new Date("Tue May 09 2013"),untilDate:new Date()};
+		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
+	 		data.length.should.equal(3);
+			onComplete();			
+		});
+
+	});
+
+	it("should be able to get commit count given a repository",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.getRepositoryDailyCommits = function(repository, options, callback){
+			callback([{date: new Date(),commitCount: 1},
+					  {date: new Date(),commitCount: 1}]);
+		};	
+
+		gitConnection.updateRepositoryCommitCount({name:"repository"},{},function(repository){
+	 		repository.numberOfCommits.should.equal(2);
+			onComplete();			
+		});
+
+	});
+
+	it("should be able to sum all repository commits",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		gitConnection.getRepositoryDailyCommits = function(repository, options, callback){
+			callback([{date: new Date(),commitCount: 1},
+					  {date: new Date(),commitCount: 1}]);
+		};	
+		var repositories = [{name:"repository1"},{name:"repository2"}]
+		gitConnection.sumAllRepositoryCommits(repositories,{},function(repositories){
+	 		repositories[0].numberOfCommits.should.equal(2);
+	 		repositories[1].numberOfCommits.should.equal(2);
+			onComplete();			
+		});
+
+	});
+
+	// it("should be able to sum commits ",function(onComplete){
+	// 	var gitConnection = gitCommits.Connect();
+	// 	gitConnection.makeRequest = function(url,callBack){
+	// 		var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
+	// 	};	
+
+	// 	gitConnection.getDailyCommitCount("tjchaplin",{},function(data){
+	// 		console.log(data);	
+	//  		data.commitCount.should.equal(151);
+	// 		onComplete();			
+	// 	});
+
+	// });
+
+
+
 	// it("should be able to git commits ",function(onComplete){
 	// 	loadTestData("sampleCommitActivity.json",function(data){
 	// 		var fromDate = new Date();
@@ -141,40 +256,6 @@ describe('When using git api',function(){
 	// 		onComplete();			
 	// 	});
 
-	// });
-
-	// it("should be able to get repositories based on a username",function(onComplete){
-	// 	var gitConnection = gitCommits.Connect();
-	// 	gitConnection.makeRequest = function(url,callBack){
-	// 		var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-	// 	};	
-
-	// 	gitConnection.getOwnerRepositories("tjchaplin",function(data){
-	// 		data.should.not.equal(undefined);
-	// 		onComplete();			
-	// 	});
-	// });
-	
-	// it("should be able to get repositories based on a user",function(onComplete){
-	// 	var gitConnection = gitCommits.Connect();
-	// 	gitConnection.makeRequest = function(url,callBack){
-	// 		var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-	// 	};	
-	// 	gitConnection.getOwnerRepositories({name:"tjchaplin",type:"users"},function(data){
-	// 		data.should.not.equal(undefined);
-	// 		onComplete();			
-	// 	});
-	// });
-	
-	// it("should be able to get repositories based on an org",function(onComplete){
-	// 	var gitConnection = gitCommits.Connect();
-	// 	gitConnection.makeRequest = function(url,callBack){
-	// 		var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-	// 	};	
-	// 	gitConnection.getOwnerRepositories({name:"github",type:"orgs"},function(data){
-	// 		data.should.not.equal(undefined);
-	// 		onComplete();			
-	// 	});
 	// });
 	
 	// it("should be able to get number of repository commits",function(onComplete){

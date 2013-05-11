@@ -1,0 +1,85 @@
+var should = require('should');
+var githubDailyCommitCount = require("../lib/githubDailyCommitCount.js");
+var enumerable = require("yaenumerable");
+
+var fs = require('fs');
+ 
+var loadTestData = function(fileName,onLoaded){
+	var file = __dirname + "/"+fileName;
+	fs.readFile(file, 'utf8', function (err, data) {
+	  if (err) {
+	    console.log('Error: ' + err);
+	    return;
+	  }
+	  data = JSON.parse(data);
+	  onLoaded(data);
+	});
+}
+
+describe('When using githubDailyCommitCount',function(){
+	
+	it("should be able to get all commits by day",function(onComplete){
+		loadTestData("sampleCommitActivity.json",function(commitStats){
+			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats);
+			
+			dailyCommits.length.should.equal(364);
+			onComplete();
+		});
+	});
+
+	it("should be able to sum commits ",function(onComplete){
+		loadTestData("sampleCommitActivity.json",function(commitStats){
+			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats);
+
+			var sumOfCommits = enumerable.FromArray(dailyCommits)
+										.Sum(function(dailyCommit){ return dailyCommit.commitCount;});
+			
+			sumOfCommits.should.equal(151);
+			onComplete();
+		});
+
+	});
+
+	it("should be able to sum commits given a since date ",function(onComplete){
+		loadTestData("sampleCommitActivity.json",function(commitStats){
+			var options = {sinceDate:new Date("Tue May 07 2013")};
+			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
+			
+			var sumOfCommits = enumerable.FromArray(dailyCommits)
+										.Sum(function(dailyCommit){ return dailyCommit.commitCount;});
+			
+			sumOfCommits.should.equal(2);
+			onComplete();
+		});
+
+	});
+
+	it("should be able to sum commits given an until date ",function(onComplete){
+		loadTestData("sampleCommitActivity.json",function(commitStats){
+			var options = {untilDate:new Date("Tue May 07 2013")};
+			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
+			
+			var sumOfCommits = enumerable.FromArray(dailyCommits)
+										.Sum(function(dailyCommit){ return dailyCommit.commitCount;});
+			
+			sumOfCommits.should.equal(149);
+			onComplete();
+		});
+	});
+
+	it("should be able to sum commits given a since and until date ",function(onComplete){
+		loadTestData("sampleCommitActivity.json",function(commitStats){
+			var options = {sinceDate:new Date("Tue January 07 2013"),untilDate:new Date()};
+			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
+			
+			var sumOfCommits = enumerable.FromArray(dailyCommits)
+										.Sum(function(dailyCommit){ return dailyCommit.commitCount;});
+			
+			sumOfCommits.should.equal(25);
+			onComplete();
+		});
+
+	});
+	
+});
+
