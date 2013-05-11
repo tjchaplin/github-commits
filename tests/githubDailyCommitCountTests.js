@@ -42,7 +42,7 @@ describe('When using githubDailyCommitCount',function(){
 
 	it("should be able to sum commits given a since date ",function(onComplete){
 		loadTestData("sampleCommitActivity.json",function(commitStats){
-			var options = {sinceDate:new Date("Tue May 07 2013")};
+			var options = {sinceDate:new Date("2013-05-07T00:00:00Z")};
 			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
 			
 			var sumOfCommits = enumerable.FromArray(dailyCommits)
@@ -56,7 +56,7 @@ describe('When using githubDailyCommitCount',function(){
 
 	it("should be able to sum commits given an until date ",function(onComplete){
 		loadTestData("sampleCommitActivity.json",function(commitStats){
-			var options = {untilDate:new Date("Tue May 07 2013")};
+			var options = {untilDate:new Date("2013-05-06T00:00:00Z")};
 			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
 			
 			var sumOfCommits = enumerable.FromArray(dailyCommits)
@@ -69,7 +69,7 @@ describe('When using githubDailyCommitCount',function(){
 
 	it("should be able to sum commits given a since and until date ",function(onComplete){
 		loadTestData("sampleCommitActivity.json",function(commitStats){
-			var options = {sinceDate:new Date("Tue January 07 2013"),untilDate:new Date()};
+			var options = {sinceDate:new Date("2013-01-07T00:00:00Z"),untilDate:new Date()};
 			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats,options);
 			
 			var sumOfCommits = enumerable.FromArray(dailyCommits)
