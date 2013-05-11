@@ -85,21 +85,21 @@
   var gitHubCommits = require("github-commits");
   var gitConnection = gitHubCommits.Connect();
 
-  gitConnection.getOwnerRepositories("tjchaplin", function(repositories){
+  gitConnection.getRepositories("tjchaplin", function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
 
   //Same as above but using the owner object:{"name": "aGitUserName"}
   var owner = {name:"tjchaplin";
-  gitConnection.getOwnerRepositories(owner, function(repositories){
+  gitConnection.getRepositories(owner, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
 
   //Same as above but explicitly defining the owner object for a user type:{"name": "aGitUserName","type":"users"}
   var owner = {name:"tjchaplin",type:"users"};
-  gitConnection.getOwnerRepositories(owner, function(repositories){
+  gitConnection.getRepositories(owner, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
@@ -112,7 +112,7 @@
   var gitConnection = gitHubCommits.Connect();
 
   var owner = {name:"github",type:"orgs"};
-  gitConnection.getOwnerRepositories({name:"github",type:"orgs"}, function(repositories){
+  gitConnection.getRepositories({name:"github",type:"orgs"}, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
