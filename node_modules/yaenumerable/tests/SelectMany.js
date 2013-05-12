@@ -26,5 +26,8 @@ describe('When using SelectMany',function(){
 		var result = enumerable.SelectMany(function(item){return item.a}).Sum();
 		result.should.eql(45)
 	});
-
+	it("Should be able to combine with other enumerable functions",function(){
+		var result = enumerable.SelectMany(function(item){return item.a}).Count();
+		result.should.eql(9)
+	});
 });

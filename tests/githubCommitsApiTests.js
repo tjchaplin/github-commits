@@ -124,21 +124,6 @@ describe('When using git api',function(){
 		});
 
 	});
-
-	it("should be able to sum all repository commits",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.getRepositoryDailyCommits = function(repository, options, callback){
-			callback([{date: new Date(),commitCount: 1},
-					  {date: new Date(),commitCount: 1}]);
-		};	
-		var repositories = [{name:"repository1"},{name:"repository2"}]
-		gitConnection.sumAllRepositoryCommits(repositories,{},function(repositories){
-	 		repositories[0].numberOfCommits.should.equal(2);
-	 		repositories[1].numberOfCommits.should.equal(2);
-			onComplete();			
-		});
-
-	});
 	
 });
 
