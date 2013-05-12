@@ -53,7 +53,7 @@
 
   var owner = {name:"tjchaplin",type:"users"};
   //options can contain any of number of the below properties
-  var options = {sinceDate:"2013-05-05T00:00:00Z",untilDate : "2013-05-05T23:59:59Z"};
+  var options = {sinceDate:new Date("2013-05-05T00:00:00Z"),untilDate : new Date("2013-05-05T23:59:59Z")};
 
   gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
       //repositories will be an array of all repositories for user
@@ -70,7 +70,7 @@
 
   var owner = {name:"github",type:"orgs"};
   //options can contain any of number of the below properties
-  var options = {sinceDate:"2013-05-05T00:00:00Z",untilDate : "2013-05-05T23:59:59Z"};
+  var options = {sinceDate:new Date("2013-05-05T00:00:00Z"),untilDate : new Date("2013-05-05T23:59:59Z")};
 
   gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
       //repositories will be an array of all repositories for the org
@@ -85,21 +85,21 @@
   var gitHubCommits = require("github-commits");
   var gitConnection = gitHubCommits.Connect();
 
-  gitConnection.getOwnerRepositories("tjchaplin", function(repositories){
+  gitConnection.getRepositories("tjchaplin", function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
 
   //Same as above but using the owner object:{"name": "aGitUserName"}
   var owner = {name:"tjchaplin";
-  gitConnection.getOwnerRepositories(owner, function(repositories){
+  gitConnection.getRepositories(owner, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
 
   //Same as above but explicitly defining the owner object for a user type:{"name": "aGitUserName","type":"users"}
   var owner = {name:"tjchaplin",type:"users"};
-  gitConnection.getOwnerRepositories(owner, function(repositories){
+  gitConnection.getRepositories(owner, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
@@ -112,7 +112,7 @@
   var gitConnection = gitHubCommits.Connect();
 
   var owner = {name:"github",type:"orgs"};
-  gitConnection.getOwnerRepositories({name:"github",type:"orgs"}, function(repositories){
+  gitConnection.getRepositories({name:"github",type:"orgs"}, function(repositories){
       //repositories will be an array of all repositories for user "tjchaplin"
       console.log(repositories);
   });
