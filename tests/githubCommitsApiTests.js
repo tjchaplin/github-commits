@@ -20,6 +20,17 @@ var loadTestData = function(fileName,onLoaded){
 describe('When using git api',function(){
 	this.timeout(60000);
 	
+	it("should be able to get repositories based on a username",function(onComplete){
+		var gitConnection = gitCommits.Connect();
+		
+		// gitConnection.userRequest("tjchaplin")
+		// 			.repositories()
+		//			.commits()
+		// 			.from("jkjklj").to("1jljlj")
+		// 			.forCurrent("week")	
+		// 			.top(5,function(commiter){return commiter.commitCount});
+		// 			.sum(function(repository){return repository.commitCount});
+	});
 
 	it("should be able to get repositories based on a username",function(onComplete){
 		var gitConnection = gitCommits.Connect();
@@ -59,12 +70,12 @@ describe('When using git api',function(){
 	
 	it("should be able to get commits by day",function(onComplete){
 
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
+		var gitConnection = gitCommits.Connect("" , "", function(url,callBack){
+			console.log("called here!!!");
 			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
-		};	
+		});	
 
-		gitConnection.getRepositoryDailyCommits("tjchaplin",{},function(data){
+		gitConnection.getRepositoryDailyCommits({name: "tjchaplin"},function(data){
 	 		data.length.should.equal(364);
 			onComplete();			
 		});
@@ -77,6 +88,7 @@ describe('When using git api',function(){
 			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
 		};	
 		var options = {sinceDate:new Date("2013-05-07T00:00:00Z")};
+
 		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
 	 		data.length.should.equal(5);
 			onComplete();			

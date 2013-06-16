@@ -19,23 +19,30 @@ var loadTestData = function(fileName,onLoaded){
 describe('When using githubDailyCommitCount',function(){
 	
 	it("should be able to get all commits by day",function(onComplete){
-		loadTestData("sampleCommitActivity.json",function(commitStats){
-			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats);
-			
+		githubDailyCommitCount.httpsRequest = function(requestUrl, callback){
+			loadTestData("sampleCommitActivity.json",function(commitStats){
+				callback(commitStats);
+			});
+		};
+
+		var repositoryRequest = {owner:"",name:""};
+		githubDailyCommitCount.getDailyCommits(repositoryRequest, function(dailyCommits){
 			dailyCommits.length.should.equal(364);
-			onComplete();
+			onComplete();			
 		});
 	});
 
 	it("should be able to sum commits ",function(onComplete){
-		loadTestData("sampleCommitActivity.json",function(commitStats){
-			var dailyCommits = githubDailyCommitCount.dailyCommits(commitStats);
+		githubDailyCommitCount.httpsRequest = function(requestUrl, callback){
+			loadTestData("sampleCommitActivity.json",function(commitStats){
+				callback(commitStats);
+			});
+		};
 
-			var sumOfCommits = enumerable.FromArray(dailyCommits)
-										.Sum(function(dailyCommit){ return dailyCommit.commitCount;});
-			
-			sumOfCommits.should.equal(151);
-			onComplete();
+		var repositoryRequest = {owner:"",name:""};
+		githubDailyCommitCount.sumOfDailyCommits(repositoryRequest, function(sumOfDailyCommits){
+			sumOfDailyCommits.should.equal(151);
+			onComplete();			
 		});
 
 	});
