@@ -19,7 +19,8 @@
   },
   "browserDependencies": {},
   "dependencies": {
-    "yaenumerable": "*"
+    "yaenumerable": "*",
+    "async":"0.2.9"
   },
   "keywords": [
     "git",

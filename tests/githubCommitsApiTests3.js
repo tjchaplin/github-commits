@@ -1,6 +1,7 @@
 var should = require('should');
 var gitCommits = require("../lib/githubCommitsApi3.js");
 var enumerable = require("yaenumerable");
+var async = require('async');
 
 var fs = require('fs');
  
@@ -22,6 +23,7 @@ var fakeRequestClient = function(mockRequst){
 	self.request = function(url,callback){
 		var fileName = mockRequst[url];
 		loadTestData(fileName,function(data){
+
 			callback(data);		
 		});
 	};
@@ -49,6 +51,43 @@ var fakeRequestClient = function(mockRequst){
 // 		onComplete();
 // 	});
 // });
+// describe('When getting user repositories',function(){
+// 	it("should be able to get repositories based on a username",function(onComplete){
+// 		async.series([function(callback){
+// 			console.log("1");
+// 			setTimeout(function() {
+// 				console.log("In timeout 1");
+// 				callback();				
+// 			}, 10);
+
+// 		},function(callback){
+// 			console.log("2");
+// 			callback();
+// 			onComplete();
+// 		}
+// 			]);
+		
+// 	});
+// });
+// describe('When getting user repositories',function(){
+// 	it("should be able to get repositories based on a username",function(onComplete){
+// 		var f1 = function(callback){
+// 			console.log("1");
+// 			setTimeout(function() {
+// 				console.log("In timeout 1");
+// 				callback();				
+// 			}, 10);
+
+// 		};
+// 		var f2 = function(callback){
+// 			console.log("2");
+// 			callback();
+// 			onComplete();
+// 		};
+// 		async.series([f1,f2]);
+		
+// 	});
+// });
 describe('When getting user repositories',function(){
 	it("should be able to get repositories based on a username",function(onComplete){
 		var gitConnection = gitCommits.Connect();
@@ -60,6 +99,7 @@ describe('When getting user repositories',function(){
 		gitConnection.user("tjchaplin")
 					  .repositories()
 					  .toArray(function(repositories){
+					  	console.log(repositories);
 					  	repositories.length.should.be.eql(10);
 						onComplete();
 					  });
