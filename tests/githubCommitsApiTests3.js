@@ -88,25 +88,41 @@ var fakeRequestClient = function(mockRequst){
 		
 // 	});
 // });
+
 describe('When getting user repositories',function(){
 	it("should be able to sum open issues",function(onComplete){
 		var gitConnection = gitCommits.Connect();
 		var mockRequst={};
-		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
+		mockRequst["https://api.github.com/repos/tjchaplin/scarlet/commits"] = "sampleGitCommits.json";
 
 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
 
 		gitConnection.user("tjchaplin")
-					  .repositories()
-					  .sum(function(repository){
-					  		return repository.openIssues;
-					  	}
-					  	,function(sum){
-					  		sum.should.be.eql(10);
-							onComplete();
+					  .commits([{name:'scarlet'}])
+					  .toArray(function(repositories){
+					  	repositories[0].commitCount.should.eql(30);
+					  	onComplete();
 					  });
 	});
 });
+
+// describe('When getting user repositories',function(){
+// 	it("should be able to sum open issues",function(onComplete){
+// 		var gitConnection = gitCommits.Connect();
+// 		var mockRequst={};
+// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
+
+// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+
+// 		gitConnection.user("tjchaplin")
+// 					  .repositories()
+// 					  .sum(function(repository){return repository.openIssues;}
+// 					  	,function(sum){
+// 					  		sum.should.be.eql(10);
+// 							onComplete();
+// 					  });
+// 	});
+// });
 
 // describe('When getting user repositories',function(){
 // 	it("should be able to get repositories based on a username",function(onComplete){
