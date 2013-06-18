@@ -89,7 +89,7 @@ var fakeRequestClient = function(mockRequst){
 // 	});
 // });
 describe('When getting user repositories',function(){
-	it("should be able to get repositories based on a username",function(onComplete){
+	it("should be able to sum open issues",function(onComplete){
 		var gitConnection = gitCommits.Connect();
 		var mockRequst={};
 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
@@ -98,27 +98,47 @@ describe('When getting user repositories',function(){
 
 		gitConnection.user("tjchaplin")
 					  .repositories()
-					  .toArray(function(repositories){
-					  	console.log(repositories);
-					  	repositories.length.should.be.eql(10);
-						onComplete();
+					  .sum(function(repository){
+					  		return repository.openIssues;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(10);
+							onComplete();
 					  });
 	});
 });
-describe('When getting user repositories commits',function(){
-	it("should be able to get commits",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		var mockRequst={};
-		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleRepositories.json";
-		mockRequst["https://api.github.com/repos/tjchaplin/cqrs-journey-code/commits"] = "sampleGitRepositories.json";
 
-		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+// describe('When getting user repositories',function(){
+// 	it("should be able to get repositories based on a username",function(onComplete){
+// 		var gitConnection = gitCommits.Connect();
+// 		var mockRequst={};
+// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
 
-		gitConnection.user("tjchaplin")
-					  .repositories()
-					  .toArray(function(repositories){
-					  	repositories.length.should.be.eql(1);
-						onComplete();
-					  });
-	});
-});
+// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+
+// 		gitConnection.user("tjchaplin")
+// 					  .repositories()
+// 					  .toArray(function(repositories){
+// 					  	console.log(repositories);
+// 					  	repositories.length.should.be.eql(10);
+// 						onComplete();
+// 					  });
+// 	});
+// });
+// describe('When getting user repositories commits',function(){
+// 	it("should be able to get commits",function(onComplete){
+// 		var gitConnection = gitCommits.Connect();
+// 		var mockRequst={};
+// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleRepositories.json";
+// 		mockRequst["https://api.github.com/repos/tjchaplin/cqrs-journey-code/commits"] = "sampleGitRepositories.json";
+
+// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+
+// 		gitConnection.user("tjchaplin")
+// 					  .repositories()
+// 					  .toArray(function(repositories){
+// 					  	repositories.length.should.be.eql(1);
+// 						onComplete();
+// 					  });
+// 	});
+// });
