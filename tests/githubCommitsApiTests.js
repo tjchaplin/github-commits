@@ -1,6 +1,8 @@
 var should = require('should');
-var gitCommits = require("../lib/githubCommitsApi.js");
+var dateExtensions = require("../lib/dateExtensions.js");
+var GitCommits = require("../lib/githubCommitsApi.js");
 var enumerable = require("yaenumerable");
+var async = require('async');
 
 var fs = require('fs');
  
@@ -16,126 +18,175 @@ var loadTestData = function(fileName,onLoaded){
 	});
 }
 
+var fakeRequestClient = function(mockRequst){
+	var self = this;
 
-describe('When using git api',function(){
-	this.timeout(60000);
-	
-	it("should be able to get repositories based on a username",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		
-		// gitConnection.userRequest("tjchaplin")
-		// 			.repositories()
-		//			.commits()
-		// 			.from("jkjklj").to("1jljlj")
-		// 			.forCurrent("week")	
-		// 			.top(5,function(commiter){return commiter.commitCount});
-		// 			.sum(function(repository){return repository.commitCount});
-	});
+	self.request = function(url,callback){
+		var fileName = mockRequst[url];
 
-	it("should be able to get repositories based on a username",function(onComplete){
-		var gitConnection = gitCommits.Connect();
+		if(!fileName)
+			return callback();
 
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-		};	
+		loadTestData(fileName,function(data){
 
-		gitConnection.getRepositories("tjchaplin",function(data){
-			data.should.not.equal(undefined);
-			onComplete();			
+			callback(data);		
 		});
+	};
+	return self;
+};
+
+describe('When getting current week commits',function(){
+	it("should be able to get commits",function(onComplete){
+
+		var mockRequst={};
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+ dateExtensions.getFirstSundayOfWeek(new Date());
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.currentWeekCommits([{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
 	});
-	
-	it("should be able to get repositories based on a user owner",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-		};	
-		gitConnection.getRepositories({name:"tjchaplin",type:"users"},function(data){
-			data.should.not.equal(undefined);
-			onComplete();			
-		});
-	});
-	
-	it("should be able to get repositories based on an org owner",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleGitRepositories.json",callBack);
-		};	
-		gitConnection.getRepositories({name:"github",type:"orgs"},function(data){
-			data.should.not.equal(undefined);
-			onComplete();			
-		});
-	});
-
-	
-	it("should be able to get commits by day",function(onComplete){
-
-		var gitConnection = gitCommits.Connect("" , "", function(url,callBack){
-			console.log("called here!!!");
-			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
-		});	
-
-		gitConnection.getRepositoryDailyCommits({name: "tjchaplin"},function(data){
-	 		data.length.should.equal(364);
-			onComplete();			
-		});
-	});
-
-
-	it("should be able to get commits given a since date ",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
-		};	
-		var options = {sinceDate:new Date("2013-05-07T00:00:00Z")};
-
-		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
-	 		data.length.should.equal(5);
-			onComplete();			
-		});
-
-	});
-
-	it("should be able to get commits given an until date ",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
-		};	
-		var options = {untilDate:new Date("2013-05-06T00:00:00Z")};
-		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
-	 		data.length.should.equal(359);
-			onComplete();			
-		});
-
-	});
-
-
-	it("should be able to get commits given a since and until date ",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.makeRequest = function(url,callBack){
-			var sampleGitRepository = loadTestData("sampleCommitActivity.json",callBack);
-		};	
-		var options = {sinceDate:new Date("2013-05-09T00:00:00Z"),untilDate:new Date()};
-		gitConnection.getRepositoryDailyCommits("tjchaplin",options,function(data){
-	 		data.length.should.equal(3);
-			onComplete();			
-		});
-
-	});
-
-	it("should be able to get commit count given a repository",function(onComplete){
-		var gitConnection = gitCommits.Connect();
-		gitConnection.getRepositoryDailyCommits = function(repository, options, callback){
-			callback([{date: new Date(),commitCount: 1},
-					  {date: new Date(),commitCount: 1}]);
-		};	
-
-		gitConnection.updateRepositoryCommitCount({name:"repository"},{},function(repository){
-	 		repository.numberOfCommits.should.equal(2);
-			onComplete();			
-		});
-
-	});
-	
 });
 
+describe('When getting current week commits',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+ dateExtensions.getFirstSundayOfWeek(new Date());
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.currentWeekCommits([{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
+
+describe('When getting commits since',function(){
+	it("should be able to get commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsSince(sinceDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
+
+describe('When getting commits since',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsSince(sinceDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to get commits",function(onComplete){
+
+		var mockRequst={};
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsUntil(untilDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsUntil(untilDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to get commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate+"&until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsBetween(sinceDate,untilDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate+"&until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsBetween(sinceDate,untilDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});

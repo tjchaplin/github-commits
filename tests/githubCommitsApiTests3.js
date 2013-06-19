@@ -1,4 +1,5 @@
 var should = require('should');
+var dateExtensions = require("../lib/dateExtensions.js");
 var GitCommits = require("../lib/githubCommitsApi.js");
 var enumerable = require("yaenumerable");
 var async = require('async');
@@ -19,12 +20,8 @@ var loadTestData = function(fileName,onLoaded){
 
 var fakeRequestClient = function(mockRequst){
 	var self = this;
-	self.url = undefined;
 
 	self.request = function(url,callback){
-		self.url = url;
-		var url = url.slice(0,url.indexOf("?"));
-		
 		var fileName = mockRequst[url];
 
 		if(!fileName)
@@ -37,71 +34,13 @@ var fakeRequestClient = function(mockRequst){
 	};
 	return self;
 };
-		//var gitConnection = gitCommits.Connect();
-		
-		// gitConnection.userRequest("tjchaplin")
-		// 			.repositories()
-		//			.commits()
-		// 			.from("jkjklj").to("1jljlj")
-		// 			.forCurrent("week")	
-		// 			.top(5,function(commiter){return commiter.commitCount});
-		// 			.sum(function(repository){return repository.commitCount},funcition(onComplete){},function(onError){});
-		//			.
-// describe('When using git api',function(){
-// 	this.timeout(60000);
-	
-// 	it("should be able to get repositories based on a username",function(onComplete){
-
-
-// 		var gitConnection = gitCommits.Connect();
-// 		var result = gitConnection.user("tjchaplin");
-// 		console.log(result);
-// 		onComplete();
-// 	});
-// });
-// describe('When getting user repositories',function(){
-// 	it("should be able to get repositories based on a username",function(onComplete){
-// 		async.series([function(callback){
-// 			console.log("1");
-// 			setTimeout(function() {
-// 				console.log("In timeout 1");
-// 				callback();				
-// 			}, 10);
-
-// 		},function(callback){
-// 			console.log("2");
-// 			callback();
-// 			onComplete();
-// 		}
-// 			]);
-		
-// 	});
-// });
-// describe('When getting user repositories',function(){
-// 	it("should be able to get repositories based on a username",function(onComplete){
-// 		var f1 = function(callback){
-// 			console.log("1");
-// 			setTimeout(function() {
-// 				console.log("In timeout 1");
-// 				callback();				
-// 			}, 10);
-
-// 		};
-// 		var f2 = function(callback){
-// 			console.log("2");
-// 			callback();
-// 			onComplete();
-// 		};
-// 		async.series([f1,f2]);
-		
-// 	});
-// });
 
 describe('When getting current week commits',function(){
 	it("should be able to get commits",function(onComplete){
 
 		var mockRequst={};
-		mockRequst["https://api.github.com/repos/tjchaplin/scarlet/commits"] = "sampleGitCommits.json";
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+ dateExtensions.getFirstSundayOfWeek(new Date());
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
 
 		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
 		gitConnection.forUser("tjchaplin")							
@@ -117,7 +56,8 @@ describe('When getting current week commits',function(){
 	it("should be able to sum commits",function(onComplete){
 
 		var mockRequst={};
-		mockRequst["https://api.github.com/repos/tjchaplin/scarlet/commits"] = "sampleGitCommits.json";
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+ dateExtensions.getFirstSundayOfWeek(new Date());
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
 
 		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
 		gitConnection.forUser("tjchaplin")							
@@ -132,55 +72,121 @@ describe('When getting current week commits',function(){
 	});
 });
 
-// describe('When getting user repositories',function(){
-// 	it("should be able to sum open issues",function(onComplete){
-// 		var gitConnection = gitCommits.Connect();
-// 		var mockRequst={};
-// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
+describe('When getting commits since',function(){
+	it("should be able to get commits",function(onComplete){
 
-// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+		var mockRequst={};
+		var sinceDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
 
-// 		gitConnection.user("tjchaplin")
-// 					  .repositories()
-// 					  .sum(function(repository){return repository.openIssues;}
-// 					  	,function(sum){
-// 					  		sum.should.be.eql(10);
-// 							onComplete();
-// 					  });
-// 	});
-// });
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsSince(sinceDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
 
-// describe('When getting user repositories',function(){
-// 	it("should be able to get repositories based on a username",function(onComplete){
-// 		var gitConnection = gitCommits.Connect();
-// 		var mockRequst={};
-// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleGitRepositories.json";
+describe('When getting commits since',function(){
+	it("should be able to sum commits",function(onComplete){
 
-// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+		var mockRequst={};
+		var sinceDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
 
-// 		gitConnection.user("tjchaplin")
-// 					  .repositories()
-// 					  .toArray(function(repositories){
-// 					  	console.log(repositories);
-// 					  	repositories.length.should.be.eql(10);
-// 						onComplete();
-// 					  });
-// 	});
-// });
-// describe('When getting user repositories commits',function(){
-// 	it("should be able to get commits",function(onComplete){
-// 		var gitConnection = gitCommits.Connect();
-// 		var mockRequst={};
-// 		mockRequst["https://api.github.com/User/tjchaplin/repos"] = "sampleRepositories.json";
-// 		mockRequst["https://api.github.com/repos/tjchaplin/cqrs-journey-code/commits"] = "sampleGitRepositories.json";
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsSince(sinceDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
 
-// 		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+describe('When getting commits until',function(){
+	it("should be able to get commits",function(onComplete){
 
-// 		gitConnection.user("tjchaplin")
-// 					  .repositories()
-// 					  .toArray(function(repositories){
-// 					  	repositories.length.should.be.eql(1);
-// 						onComplete();
-// 					  });
-// 	});
-// });
+		var mockRequst={};
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsUntil(untilDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsUntil(untilDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to get commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate+"&until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsBetween(sinceDate,untilDate,[{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
+
+describe('When getting commits until',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		var sinceDate = new Date();
+		var untilDate = new Date();
+		var expectedRequestUrl = "https://api.github.com/repos/tjchaplin/scarlet/commits" + "?since="+sinceDate+"&until="+untilDate;
+		mockRequst[expectedRequestUrl] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.commitsBetween(sinceDate,untilDate,[{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
+					  });
+	});
+});
