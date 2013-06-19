@@ -1,5 +1,5 @@
 var should = require('should');
-var gitCommits = require("../lib/githubCommitsApi3.js");
+var GitCommits = require("../lib/githubCommitsApi.js");
 var enumerable = require("yaenumerable");
 var async = require('async');
 
@@ -19,9 +19,17 @@ var loadTestData = function(fileName,onLoaded){
 
 var fakeRequestClient = function(mockRequst){
 	var self = this;
+	self.url = undefined;
 
 	self.request = function(url,callback){
+		self.url = url;
+		var url = url.slice(0,url.indexOf("?"));
+		
 		var fileName = mockRequst[url];
+
+		if(!fileName)
+			return callback();
+
 		loadTestData(fileName,function(data){
 
 			callback(data);		
@@ -89,19 +97,37 @@ var fakeRequestClient = function(mockRequst){
 // 	});
 // });
 
-describe('When getting user repositories',function(){
-	it("should be able to sum open issues",function(onComplete){
-		var gitConnection = gitCommits.Connect();
+describe('When getting current week commits',function(){
+	it("should be able to get commits",function(onComplete){
+
 		var mockRequst={};
 		mockRequst["https://api.github.com/repos/tjchaplin/scarlet/commits"] = "sampleGitCommits.json";
 
-		gitConnection.requestClient = new fakeRequestClient(mockRequst);
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.currentWeekCommits([{name:"scarlet"}])
+					.toArray(function(repositories){
+						repositories[0].commitCount.should.eql(30);
+						onComplete();
+					});
+	});
+});
 
-		gitConnection.user("tjchaplin")
-					  .commits([{name:'scarlet'}])
-					  .toArray(function(repositories){
-					  	repositories[0].commitCount.should.eql(30);
-					  	onComplete();
+describe('When getting current week commits',function(){
+	it("should be able to sum commits",function(onComplete){
+
+		var mockRequst={};
+		mockRequst["https://api.github.com/repos/tjchaplin/scarlet/commits"] = "sampleGitCommits.json";
+
+		var gitConnection = new GitCommits(new fakeRequestClient(mockRequst));
+		gitConnection.forUser("tjchaplin")							
+					.currentWeekCommits([{name:"scarlet"}])
+					  .sum(function(repository){
+					  		return repository.commitCount;
+					  	}
+					  	,function(sum){
+					  		sum.should.be.eql(30);
+							onComplete();
 					  });
 	});
 });
