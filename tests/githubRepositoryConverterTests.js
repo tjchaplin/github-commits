@@ -1,5 +1,5 @@
 var should = require('should');
-var githubRepositoryConverter = require("../lib/githubRepositoryConverter.js");
+var githubRepositoryConverter = require("../lib/github-repository-converter.js");
 var enumerable = require("yaenumerable");
 
 var fs = require('fs');

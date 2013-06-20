@@ -1,6 +1,6 @@
 var should = require('should');
 var dateExtensions = require("../lib/dateExtensions.js");
-var GitCommits = require("../lib/githubCommitsApi.js");
+var GitCommits = require("../lib/github-commits-api.js");
 var enumerable = require("yaenumerable");
 var async = require('async');
 
