@@ -1,7 +1,7 @@
 {
   "name": "github-commits",
   "description": "Framework to get users and organization commit stats from github",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Tim Chaplin <tim.chaplin@ticktockdevelopment.com>",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   "browserDependencies": {},
   "dependencies": {
     "yaenumerable": "*",
-    "async":"0.2.9"
+    "async": "0.2.9"
   },
   "keywords": [
     "git",
