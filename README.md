@@ -16,107 +16,158 @@
 
 ##Examples
 
-###Get all GitHub repository commits for a user
+###Get Current Week GitHub repository commits for an org
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  var options = {};
-  var owner = {name:"tjchaplin",type:"users"};
-  gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
-      //repositories will be an array of all repositories for user "tjchaplin"
-      //with a numberOfCommits defined for each repository
-      console.log(repositories);    
-  });
+  gitHubCommits.forOrg("github")
+              .currentWeekCommits()
+              .toArray(function(repositories){
+                console.log(repositories);
+              });
   ```
-
-###Get all GitHub repository commits for an org
+  
+###Sum Current Week Commits for an org
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  var options = {};
-  var owner = {name:"github",type:"orgs"};
-  gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
-      //repositories will be an array of all repositories for org
-      //with a numberOfCommits defined for each repository
-      console.log(repositories);    
-  });
+  gitHubCommits.forOrg("github")
+              .currentWeekCommits()
+              .sumCommits(function(sum){
+                console.log(sum);
+              });
   ```
-###Get all GitHub repository commits for a user with a date filter
+###Sum Open Issues for an org for current week commits
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  var owner = {name:"tjchaplin",type:"users"};
-  //options can contain any of number of the below properties
-  var options = {sinceDate:new Date("2013-05-05T00:00:00Z"),untilDate : new Date("2013-05-05T23:59:59Z")};
-
-  gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
-      //repositories will be an array of all repositories for user
-      //with a numberOfCommits defined for each repository
-      console.log(repositories);    
-  });
+  gitHubCommits.forOrg("github")
+              .currentWeekCommits()
+              .sumOpenIssues(function(sum){
+                console.log(sum);
+              });
   ```
-
-###Get all GitHub repository commits for an org with a date filter
+  
+###Get Commits for an org Until/Up to a Certain Date
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  var owner = {name:"github",type:"orgs"};
-  //options can contain any of number of the below properties
-  var options = {sinceDate:new Date("2013-05-05T00:00:00Z"),untilDate : new Date("2013-05-05T23:59:59Z")};
-
-  gitConnection.getAllRepositoryCommits(owner,options,function(repositories){
-      //repositories will be an array of all repositories for the org
-      //with numberOfCommits defined for each repository
-      console.log(repositories);    
-  });
+  gitHubCommits.forUser("tjchaplin")
+              .commitsUntil("2020-12-31T23:59:59Z")
+              .toArray(function(repositories){
+                console.log(repositories);
+              });
   ```
-
-###Get all GitHub repositories for a user
+  
+###Sum Commits for an org Until/Up to a Certain Date
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  gitConnection.getRepositories("tjchaplin", function(repositories){
-      //repositories will be an array of all repositories for user "tjchaplin"
-      console.log(repositories);
-  });
-
-  //Same as above but using the owner object:{"name": "aGitUserName"}
-  var owner = {name:"tjchaplin";
-  gitConnection.getRepositories(owner, function(repositories){
-      //repositories will be an array of all repositories for user "tjchaplin"
-      console.log(repositories);
-  });
-
-  //Same as above but explicitly defining the owner object for a user type:{"name": "aGitUserName","type":"users"}
-  var owner = {name:"tjchaplin",type:"users"};
-  gitConnection.getRepositories(owner, function(repositories){
-      //repositories will be an array of all repositories for user "tjchaplin"
-      console.log(repositories);
-  });
+  gitHubCommits.forOrg("github")
+              .commitsUntil("2020-12-31T23:59:59Z")
+              .sumCommits(function(sum){
+                console.log(sum);
+              });
   ```
-
-###Get all GitHub repositories for an org
+  
+###Sum Open Issues for an org Until/Upa Certain Commit Date
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  var gitConnection = gitHubCommits.Connect();
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
 
-  var owner = {name:"github",type:"orgs"};
-  gitConnection.getRepositories({name:"github",type:"orgs"}, function(repositories){
-      //repositories will be an array of all repositories for user "tjchaplin"
-      console.log(repositories);
-  });
+  gitHubCommits.forOrg("github")
+              .commitsUntil("2020-12-31T23:59:59Z")
+              .sumOpenIssues(function(sum){
+                console.log(sum);
+              });
   ```
+  
+###Get Commits for an org Since a Certain Date
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("tjchaplin")
+              .commitsSince("2013-01-01T23:59:59Z")
+              .toArray(function(repositories){
+                console.log(repositories);
+              });
+  ```
+  
+###Sum Commits for an org Since a Certain Date
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("github")
+              .commitsSince("2013-01-01T23:59:59Z")
+              .sumCommits(function(sum){
+                console.log(sum);
+              });
+  ```
+###Sum Open Issues for an org Since a Certain Commit Date
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("github")
+              .commitsSince("2013-01-01T23:59:59Z")
+              .sumOpenIssues(function(sum){
+                console.log(sum);
+              });
+  ```
+###Get Commits for an org between a Set of Dates
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("tjchaplin")
+              .commitsBetween("2013-01-01T23:59:59Z","2020-12-31T23:59:59Z")
+              .toArray(function(repositories){
+                console.log(repositories);
+              });
+  ```
+  
+###Sum Commits for an org between a Set of Dates
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("github")
+              .commitsBetween("2013-01-01T23:59:59Z","2020-12-31T23:59:59Z")
+              .sumCommits(function(sum){
+                console.log(sum);
+              });
+  ```
+###Sum Open Issues for an org between a Set of Commit Dates
+
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  var gitHubCommits = new GitHubCommits();
+
+  gitHubCommits.forOrg("github")
+              .commitsBetween("2013-01-01T23:59:59Z","2020-12-31T23:59:59Z")
+              .sumOpenIssues(function(sum){
+                console.log(sum);
+              });
+  ```
+
 
 ###Specify an authorization key to connect with GitHub
 
