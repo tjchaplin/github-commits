@@ -24,6 +24,7 @@ describe('When using git api',function(){
 	// 	gitHubCommits.forUser("tjchaplin")
 	// 				.currentWeekCommits()
 	// 				.toArray(function(repositories){
+	// 					console.log(repositories);
 	// 					onComplete();
 	// 				});
 	// });

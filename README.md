@@ -157,3 +157,7 @@
   `npm test`
   
 ##Credits/Other Frameworks
+
+###How To Get An Authorization Code With Curl
+
+  `curl -d '{"scopes":["repo"],"note":"Help example"}' https://api.github.com/authorizations`
