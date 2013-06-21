@@ -172,22 +172,21 @@
 ###Specify an authorization key to connect with GitHub
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-  
+  var GitHubCommits = require("github-commits");
   //Can specify the GitHub api authorization key for the private or enterprise instance
-  var apiAuthorizationKey = "";
-  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey);
+  var gitHubCommits = new GitHubCommits("<SOME_GITHUB_AUTHORIZATION_KEY>");
   ```
 
 ###Specify an authorization key and Specific GitHub url to connect with
 
   ```javascript
-  var gitHubCommits = require("github-commits");
-
+  var GitHubCommits = require("github-commits");
+  
+  var gitHubUrl = "https://api.github.com";
+  var apiAuthorizationKey = "<SOME_GITHUB_AUTHORIZATION_KEY>";
+  
   //Can specify the GitHub api authorization key for the private or enterprise instance
-  var apiAuthorizationKey = "";
-  var gitHubUrl = "https://api.github.com"
-  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey,gitHubUrl);
+  var gitHubCommits = new GitHubCommits(apiAuthorizationKey,gitHubUrl);
   ```
 
 ###Specify an enterprise or private GitHub instance
@@ -196,10 +195,10 @@
   var gitHubCommits = require("github-commits");
 
   //Can specify the GitHub api authorization key for the private or enterprise instance
-  var apiAuthorizationKey = "";
-  var gitConnection = gitHubCommits.Connect(apiAuthorizationKey,"https://<ENTERPRISE-GITHUB-URL>");
-
-  //the framework can be used the same as the default connection
+  var enterpriseGitHubUrl = "https://<ENTERPISE_GITHUB_URL>";
+  var apiAuthorizationKey = "<SOME_GITHUB_AUTHORIZATION_KEY>";
+  
+  var gitHubCommits = new GitHubCommits(apiAuthorizationKey,enterpriseGitHubUrl);
   ```
 
 ###Other Examples
@@ -209,6 +208,20 @@
   
 ##Credits/Other Frameworks
 
+###API Limits
+  Github limits unauthorized requests to 60 per hour.  If you exceed the limit an error will be thrown.
+  An authorization key can be easily obtained as sepecified below, and easily used in the api
+  
+  ```javascript
+  var GitHubCommits = require("github-commits");
+  
+  var gitHubUrl = "https://api.github.com";
+  var apiAuthorizationKey = "<SOME_GITHUB_AUTHORIZATION_KEY>";
+  
+  //Can specify the GitHub api authorization key for the private or enterprise instance
+  var gitHubCommits = new GitHubCommits(apiAuthorizationKey,gitHubUrl);
+  ```
+  
 ###How To Get An Authorization Code With Curl
 
   `curl -d '{"scopes":["repo"],"note":"Help example"}' https://api.github.com/authorizations`
