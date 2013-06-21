@@ -21,12 +21,12 @@ describe('When using git api',function(){
 	
 	// it("should be able to make a repository request",function(onComplete){
 
-	// 	gitHubCommits.forUser("tjchaplin")
-	// 				.currentWeekCommits()
-	// 				.toArray(function(repositories){
-	// 					console.log(repositories);
-	// 					onComplete();
-	// 				});
+		gitHubCommits.forUser("tjchaplin")
+					.currentWeekCommits()
+					.toArray(function(repositories){
+						console.log(repositories);
+						onComplete();
+					});
 	// });
 	// 	it("should be able to make a repository request",function(onComplete){
 
