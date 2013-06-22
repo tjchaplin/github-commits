@@ -42,7 +42,7 @@ describe("When using AsyncForEach", function(){
 	it("Should be able to get index of async item for each item", function(onComplete){
 		var itemsToProcess = [1,2,3];
 
-		var longProcess = function(item, onLongProcessComplete,index){
+		var longProcess = function(item, onLongProcessComplete, onError, index){
 			setTimeout(function(){
 				item.should.be.equal(itemsToProcess[index])
 				onLongProcessComplete();
@@ -52,6 +52,25 @@ describe("When using AsyncForEach", function(){
 		Enumerable.FromArray(itemsToProcess)
 				.AsyncForEach(longProcess,
 								function(results){ 
+									onComplete();
+								});
+
+	});
+
+	it("Should call on error if an item in for each called onError", function(onComplete){
+		var itemsToProcess = [1,2,3];
+		var errorMessage = "error";
+		var errorProcess = function(item, onComplete, onError){
+			setTimeout(function(){
+				onError(errorMessage);
+			},1000)
+		};
+
+		Enumerable.FromArray(itemsToProcess)
+				.AsyncForEach(errorProcess,
+								function(results){}, 
+								function(error){
+									error.should.be.equal(errorMessage);
 									onComplete();
 								});
 

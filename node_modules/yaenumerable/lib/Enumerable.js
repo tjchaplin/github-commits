@@ -49,31 +49,37 @@
 		return self;
 	};
 
-	Enumerable.prototype.AsyncForEach = function(onEachItem, onComplete){
+	Enumerable.prototype.AsyncForEach = function(onEachItem, onComplete, onError){
 		var self = this;
 
 		var results = [];
+		var itemErrorOccured = false;
 		var numberOfCallsRemaining = self.sequence.length;
-		var hasThrownError = false;
-		try{
-			var onItemComplete =function(resultItem,error){
-				if(hasThrownError)
-					return;
 
-				results.push(resultItem);
-				numberOfCallsRemaining--;
+		var onItemError = function(error){
+			if(itemErrorOccured)
+				return;
 
-				if(numberOfCallsRemaining === 0)
-					onComplete(results,error);
-			}; 
+			if(onError)
+				onError(error,results);
 
-			self.ForEach(function(item,index){ 
-				onEachItem(item, onItemComplete, index);
-			});
-		}catch(exception){
-			onComplete(results,exception);
-			hasThrownError = true;
-		}
+			itemErrorOccured = true;
+		};
+
+		var onItemComplete =function(resultItem){
+			if(itemErrorOccured)
+				return;
+
+			results.push(resultItem);
+			numberOfCallsRemaining--;
+
+			if(numberOfCallsRemaining === 0)
+				onComplete(results);
+		}; 
+
+		self.ForEach(function(item,index){ 
+			onEachItem(item, onItemComplete, onItemError, index);
+		});
 		
 		return self;
 	};
