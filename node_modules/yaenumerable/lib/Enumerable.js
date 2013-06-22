@@ -54,19 +54,27 @@
 
 		var results = [];
 		var numberOfCallsRemaining = self.sequence.length;
+		var hasThrownError = false;
+		try{
+			var onItemComplete =function(resultItem,error){
+				if(hasThrownError)
+					return;
 
-		var onItemComplete =function(resultItem){
-			results.push(resultItem);
-			numberOfCallsRemaining--;
+				results.push(resultItem);
+				numberOfCallsRemaining--;
 
-			if(numberOfCallsRemaining === 0)
-				onComplete(results);
-		}; 
+				if(numberOfCallsRemaining === 0)
+					onComplete(results,error);
+			}; 
 
-		self.ForEach(function(item,index){ 
-			onEachItem(item, onItemComplete, index);
-		});
-
+			self.ForEach(function(item,index){ 
+				onEachItem(item, onItemComplete, index);
+			});
+		}catch(exception){
+			onComplete(results,exception);
+			hasThrownError = true;
+		}
+		
 		return self;
 	};
 

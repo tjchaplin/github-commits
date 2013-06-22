@@ -19,23 +19,31 @@ describe('When using git api',function(){
 	// 				});
 	// });
 	
-	// it("should be able to make a repository request",function(onComplete){
+	it("should be able to make a repository request",function(onComplete){
 
 		gitHubCommits.forUser("tjchaplin")
 					.currentWeekCommits()
 					.toArray(function(repositories){
 						console.log(repositories);
 						onComplete();
+					},function(error){
+						console.log(error);
+						onComplete();
 					});
-	// });
-	// 	it("should be able to make a repository request",function(onComplete){
+	});
+		it("should be able to make a repository request",function(onComplete){
 
-	// 	gitHubCommits.forUser("tjchaplin")
-	// 				.currentWeekCommits()
-	// 				.toArray(function(repositories){
-	// 					onComplete();
-	// 				});
-	// });
+		gitHubCommits.forUser("tjchaplin")
+					.currentWeekCommits()
+					.toArray(function(repositories){
+						onComplete();
+					});
+					
+			setTimeout(function(){
+				console.log("timeout");
+				onComplete();
+			},2000)
+	});
 	// it("should be able to make a repository request",function(onComplete){
 
 
