@@ -5,7 +5,7 @@ var fs = require('fs');
 
 describe('When using git api',function(){
 	this.timeout(60000);
-	var gitHubCommits = new GitHubCommits();
+	var gitHubCommits = new GitHubCommits("60a0778c69a8bf6e2a10a6d27d13ec91f07f1d0c");
 
 	// it("should be able to make a repository request",function(onComplete){
 	// 	console.log(GitHubCommits);
@@ -18,32 +18,44 @@ describe('When using git api',function(){
 	// 					onComplete();
 	// 				});
 	// });
-	
 	it("should be able to make a repository request",function(onComplete){
 
 		gitHubCommits.forUser("tjchaplin")
 					.currentWeekCommits()
-					.toArray(function(repositories){
-						console.log(repositories);
+					.sumCommits(function(sum){
+						//console.log(sum);
 						onComplete();
 					},function(error){
-						console.log(error);
+						//console.log(error);
 						onComplete();
 					});
 	});
-		it("should be able to make a repository request",function(onComplete){
 
-		gitHubCommits.forUser("tjchaplin")
-					.currentWeekCommits()
-					.toArray(function(repositories){
-						onComplete();
-					});
-					
-			setTimeout(function(){
-				console.log("timeout");
-				onComplete();
-			},2000)
-	});
+	// it("should be able to make a repository request",function(onComplete){
+
+	// 	gitHubCommits.forUser("tjchaplin")
+	// 				.currentWeekCommits()
+	// 				.toArray(function(repositories){
+	// 					console.log(repositories);
+	// 					onComplete();
+	// 				},function(error){
+	// 					console.log(error);
+	// 					onComplete();
+	// 				});
+	// });
+	// 	it("should be able to make a repository request",function(onComplete){
+
+	// 	gitHubCommits.forUser("tjchaplin")
+	// 				.currentWeekCommits()
+	// 				.toArray(function(repositories){
+	// 					onComplete();
+	// 				});
+
+	// 		setTimeout(function(){
+	// 			console.log("timeout");
+	// 			onComplete();
+	// 		},2000)
+	// });
 	// it("should be able to make a repository request",function(onComplete){
 
 
